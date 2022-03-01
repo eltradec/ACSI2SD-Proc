@@ -1,5 +1,5 @@
 //	Copyright (C) 2013 Michael McMaster <michael@codesrc.com>
-//
+//	Modified 2018 (or timestamp yymmdd) Robert Matyschok <rm@eltradec.eu), modifications commented with "RM" prefix
 //	This file is part of SCSI2SD.
 //
 //	SCSI2SD is free software: you can redistribute it and/or modify
@@ -106,7 +106,7 @@ scsiReadByte(void)
 	trace(trace_spinPhyRxFifo);
 	while (scsiPhyRxFifoEmpty() && likely(!scsiDev.resetFlag)) {}
 	uint8_t val = scsiPhyRx();
-	scsiDev.parityError = scsiDev.parityError || SCSI_Parity_Error_Read();
+	// scsiDev.parityError = scsiDev.parityError || SCSI_Parity_Error_Read(); RM no parity in ACSI
 
 	return val;
 }
@@ -132,7 +132,7 @@ scsiReadPIO(uint8* data, uint32 count)
 			++i;
 		}
 	}
-	scsiDev.parityError = scsiDev.parityError || SCSI_Parity_Error_Read();
+	// scsiDev.parityError = scsiDev.parityError || SCSI_Parity_Error_Read(); RM no parity in ACSI
 }
 
 static void
@@ -202,7 +202,7 @@ scsiReadDMAPoll()
 		if (likely(dmaSentCount == dmaTotalCount))
 		{
 			dmaInProgress = 0;
-			scsiDev.parityError = scsiDev.parityError || SCSI_Parity_Error_Read();
+			// scsiDev.parityError = scsiDev.parityError || SCSI_Parity_Error_Read(); RM no parity in ACSI
 			return 1;
 		}
 		else
@@ -309,11 +309,11 @@ doTxSingleDMA(const uint8* data, uint32 count)
 }
 
 void
-scsiWriteDMA(const uint8* data, uint32 count)
+scsiWriteDMA(const uint8_t* data, uint32 count)
 {
 	dmaSentCount = 0;
 	dmaTotalCount = count;
-	dmaBuffer = data;
+	dmaBuffer = (uint8_t*) data;
 
 	uint32_t singleCount = (count > MAX_DMA_BYTES) ? MAX_DMA_BYTES : count;
 	doTxSingleDMA(data, singleCount);
@@ -466,7 +466,7 @@ void scsiPhyReset()
 	SCSI_RST_ISR_Enable();
 	scsiTarget_AUX_CTL = scsiTarget_AUX_CTL & ~(0x03);
 
-	SCSI_Parity_Error_Read(); // clear sticky bits
+	// SCSI_Parity_Error_Read(); // clear sticky bits RM no parity in ACSI
 }
 
 static void scsiPhyInitDMA()
@@ -599,7 +599,7 @@ int scsiSelfTest()
 	#endif
 	SCSI_CTL_PHASE_Write(0);
 
-	uint32_t signalsOut[] = { 0, 0, 0 }; // RM no outputs
+	// uint32_t signalsOut[] = { 0, 0, 0 }; // RM no outputs
 	uint32_t signalsIn[] = { SCSI_Filt_BSY, SCSI_Filt_RST, SCSI_Filt_SEL };
 
 	for (i = 0; i < 3; ++i)

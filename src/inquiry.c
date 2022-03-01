@@ -1,5 +1,5 @@
 //	Copyright (C) 2013 Michael McMaster <michael@codesrc.com>
-//
+//	Modified 2018 (or timestamp yymmdd) Robert Matyschok <rm@eltradec.eu), modifications commented with "RM" prefix
 //	This file is part of SCSI2SD.
 //
 //	SCSI2SD is free software: you can redistribute it and/or modify
@@ -126,7 +126,7 @@ void scsiInquiry()
 {
 	uint8 evpd = scsiDev.cdb[1] & 1; // enable vital product data.
 	uint8 pageCode = scsiDev.cdb[2];
-	uint32 allocationLength = scsiDev.cdb[4];
+	uint16 allocationLength = ((uint16) scsiDev.cdb[3] << 8) + scsiDev.cdb[4];
 
 	// SASI standard, X3T9.3_185_RevE  states that 0 == 256 bytes
 	if (allocationLength == 0) allocationLength = 256;

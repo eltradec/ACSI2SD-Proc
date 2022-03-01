@@ -1,5 +1,5 @@
 //	Copyright (C) 2014 Michael McMaster <michael@codesrc.com>
-//
+//	Modified 2018 (or timestamp yymmdd) Robert Matyschok <rm@eltradec.eu), modifications commented with "RM" prefix
 //	This file is part of SCSI2SD.
 //
 //	SCSI2SD is free software: you can redistribute it and/or modify
@@ -654,9 +654,9 @@ static void process_SelectionPhase()
 
 	int bsy = SCSI_ReadFilt(SCSI_Filt_BSY);
 #ifdef SCSI_In_IO
-	int io = 0; // SCSI_ReadPin(SCSI_In_IO); RM no pin
+	// int io = 0; // SCSI_ReadPin(SCSI_In_IO); RM no pin
 #else
-	int io = 0;
+	// int io = 0;
 #endif
 
 	// Only read these pins AFTER SEL and BSY - we don't want to catch them
@@ -664,7 +664,7 @@ static void process_SelectionPhase()
 	// uint8 mask = (selLatchCfg && scsiDev.selFlag) ? scsiDev.selDBX : scsiReadDBxPins();
     uint8 mask = (selLatchCfg && scsiDev.selFlag) ? scsiDev.selDBX : SCSI_In_Read(); // RM
 	int maskBitCount = countBits(mask);
-	int goodParity = 1; // int goodParity = (Lookup_OddParity[mask] == SCSI_ReadPin(SCSI_In_DBP)); RM
+	// int goodParity = (Lookup_OddParity[mask] == SCSI_ReadPin(SCSI_In_DBP)); RM
 	int atnFlag = 0; // SCSI_ReadFilt(SCSI_Filt_ATN); RM no pin
 
 	int tgtIndex;
@@ -680,7 +680,7 @@ static void process_SelectionPhase()
 	sel &= (selLatchCfg && scsiDev.selFlag) || SCSI_ReadFilt(SCSI_Filt_SEL);
 	bsy |= SCSI_ReadFilt(SCSI_Filt_BSY);
 #ifdef SCSI_In_IO
-	io = 0; // |= SCSI_ReadPin(SCSI_In_IO); RM no pin
+	// io = 0; // |= SCSI_ReadPin(SCSI_In_IO); RM no pin
 #endif
 	if (!bsy && sel &&
         target && likely(maskBitCount <= 2)) // RM make it simple
